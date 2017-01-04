@@ -1,0 +1,112 @@
+/*
+ * PointGPS.cpp
+ *
+ *  Created on: 4 déc. 2016
+ *      Author: amaury
+ */
+
+#include <string>
+#include <vector>
+#include "ros/ros.h"
+
+#include "PointGPS.h"
+
+PointGPS::PointGPS() {
+	// TODO Auto-generated constructor stub
+
+}
+
+PointGPS::PointGPS(float lat, float longi, int num) {
+	this->longitude = longi;
+	this->latitude = lat;
+	this->numero = num;
+	// TODO Auto-generated constructor stub
+}
+
+PointGPS::~PointGPS() {
+	// TODO Auto-generated destructor stub
+}
+
+float PointGPS::distance(PointGPS* point){
+
+	float lat1 = this->latitude;
+	float lat2 = point->latitude;
+	float long1 = this->longitude;
+	float long2 = point->longitude;
+	
+	float unDegreTerre = 111319.4917;
+	float unDegreReduit = unDegreTerre * cos(lat1*(3.1415/180));
+	
+	float deltaY = unDegreTerre*unDegreTerre*(lat1 - lat2)*(lat1 - lat2);
+	
+	float deltaX = unDegreReduit*unDegreReduit*(long1 - long2)*(long1 - long2);
+	
+	float result = sqrt(deltaX+deltaY);
+	
+	return result;
+}
+
+
+int PointGPS::moyenneIntelligente(std::vector<PointGPS*> listeGPS){
+	int nombreGPS = listeGPS.size();
+	
+	float longMoy = 0.0;
+	float latMoy = 0.0;
+	
+	PointGPS* temp = new PointGPS(latMoy,longMoy,-1);
+	
+	float coefTotal = 0; 
+	
+	for(int i= 0; i<nombreGPS; i++){
+		coefTotal+= 1/(listeGPS[i]->hop);
+		
+		if(temp->distance(listeGPS[i])<=0.0001 || listeGPS[i]->hop > 10.0){
+			ROS_INFO("Un GPS est a 0.0 ou trop mauvais");
+			listeGPS.erase(listeGPS.begin()+i);
+			return this->moyenneIntelligente(listeGPS);
+		}
+	}
+	
+	
+	for(int i = 0; i<nombreGPS ; i++){
+		float coefNormalisateur = 1/(coefTotal*listeGPS[i]->hop);
+		longMoy += coefNormalisateur*listeGPS[i]->longitude;
+		latMoy += coefNormalisateur*listeGPS[i]->latitude;
+		
+		
+		
+		
+		if(i<nombreGPS-1){ROS_INFO("distance entre %i et %i est %f",i,i+1,listeGPS[i]->distance(listeGPS[i+1]));}
+		if(i<nombreGPS-2){ROS_INFO("distance entre %i et %i est %f",i,i+2,listeGPS[i]->distance(listeGPS[i+2]));}
+	}
+	
+	temp = new PointGPS(latMoy,longMoy,-1);
+	
+	float distanceMax = 0.0;
+	int indiceMerdique = -1;
+	
+	for(int i= 0; i<nombreGPS; i++){
+		float distanceAMoyenne = temp->distance(listeGPS[i]);
+		if(distanceAMoyenne>30.0){
+			distanceMax=distanceAMoyenne;
+			indiceMerdique=i;	
+			for(int j = i+1;j<nombreGPS; j++){
+				float distanceAMoyenne = temp->distance(listeGPS[j]);
+				if(distanceAMoyenne>distanceMax){
+					distanceMax=distanceAMoyenne;
+					indiceMerdique=j;
+				}	
+			} 
+			ROS_INFO("le GPS %i est en decalage",indiceMerdique);
+			listeGPS.erase(listeGPS.begin()+indiceMerdique);
+			return this->moyenneIntelligente(listeGPS);
+		}
+	}
+	
+	this->latitude = temp->latitude;
+	this->longitude = temp->longitude;
+
+
+	return nombreGPS;
+}
+

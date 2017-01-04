@@ -1,0 +1,29 @@
+/*
+ * PointGPS.h
+ *
+ *  Created on: 4 déc. 2016
+ *      Author: amaury
+ */
+
+#ifndef POINTGPS_H_
+#define POINTGPS_H_
+
+class PointGPS {
+public:
+	PointGPS();
+	PointGPS(float lat, float longi, int num);
+	virtual ~PointGPS();
+	
+	float longitude;
+	float latitude;
+	float time;
+	float hop;
+	int numero;
+	
+	float distance(PointGPS* point);
+	
+	int moyenneIntelligente(std::vector<PointGPS*> listeGPS);	
+	
+};
+
+#endif /* POINTGPS_H_ */
