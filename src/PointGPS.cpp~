@@ -16,10 +16,11 @@ PointGPS::PointGPS() {
 
 }
 
-PointGPS::PointGPS(float lat, float longi, int num) {
+PointGPS::PointGPS(float lat, float longi, float alt, int num) {
 	this->longitude = longi;
 	this->latitude = lat;
 	this->numero = num;
+	this->altitude = alt;
 	// TODO Auto-generated constructor stub
 }
 
@@ -33,6 +34,8 @@ float PointGPS::distance(PointGPS* point){
 	float lat2 = point->latitude;
 	float long1 = this->longitude;
 	float long2 = point->longitude;
+	
+	
 	
 	float unDegreTerre = 111319.4917;
 	float unDegreReduit = unDegreTerre * cos(lat1*(3.1415/180));
@@ -52,8 +55,8 @@ int PointGPS::moyenneIntelligente(std::vector<PointGPS*> listeGPS){
 	
 	float longMoy = 0.0;
 	float latMoy = 0.0;
-	
-	PointGPS* temp = new PointGPS(latMoy,longMoy,-1);
+	float altMoy = 0.0;
+	PointGPS* temp = new PointGPS(latMoy,longMoy,altMoy,-1);
 	
 	float coefTotal = 0; 
 	
@@ -70,9 +73,9 @@ int PointGPS::moyenneIntelligente(std::vector<PointGPS*> listeGPS){
 	
 	for(int i = 0; i<nombreGPS ; i++){
 		float coefNormalisateur = 1/(coefTotal*listeGPS[i]->hop);
-		longMoy += coefNormalisateur*listeGPS[i]->longitude/(nombreGPS);
-		latMoy += coefNormalisateur*listeGPS[i]->latitude/nombreGPS;
-		
+		longMoy += coefNormalisateur*listeGPS[i]->longitude;
+		latMoy += coefNormalisateur*listeGPS[i]->latitude;
+		altMoy += coefNormalisateur*listeGPS[i]->altitude;
 		
 		
 		
@@ -80,7 +83,9 @@ int PointGPS::moyenneIntelligente(std::vector<PointGPS*> listeGPS){
 		if(i<nombreGPS-2){ROS_INFO("distance entre %i et %i est %f",i,i+2,listeGPS[i]->distance(listeGPS[i+2]));}
 	}
 	
-	temp = new PointGPS(latMoy,longMoy,-1);
+	temp.delete();
+	
+	temp = new PointGPS(latMoy,longMoy,altMoy,-1);
 	
 	float distanceMax = 0.0;
 	int indiceMerdique = -1;
@@ -105,7 +110,7 @@ int PointGPS::moyenneIntelligente(std::vector<PointGPS*> listeGPS){
 	
 	this->latitude = temp->latitude;
 	this->longitude = temp->longitude;
-
+	this->altitude = temp->altitude;
 
 	return nombreGPS;
 }

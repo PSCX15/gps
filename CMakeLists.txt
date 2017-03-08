@@ -9,6 +9,17 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
+  diagnostic_msgs
+  diagnostic_updater
+  geographic_msgs
+  geometry_msgs
+  message_filters
+  nav_msgs
+  roslint
+  sensor_msgs
+  tf2
+  tf2_geometry_msgs
+  tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -103,8 +114,8 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES gps
-  CATKIN_DEPENDS roscpp rospy std_msgs
-  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp rospy std_msgs 
+#  DEPENDS system_lib
 )
 
 ###########
@@ -113,14 +124,14 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
-include_directories(
+ include_directories(include)
+include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
 add_executable(traitementGPS src/TraitementGPS.cpp src/PointGPS.cpp)
 target_link_libraries(traitementGPS ${catkin_LIBRARIES})
-add_dependencies(traitementGPS ${catkin_LIBRARIES})
+add_dependencies(traitementGPS ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ library
 # add_library(gps

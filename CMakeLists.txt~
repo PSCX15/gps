@@ -103,8 +103,8 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES gps
-  CATKIN_DEPENDS roscpp rospy std_msgs
-  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp rospy std_msgs 
+#  DEPENDS system_lib
 )
 
 ###########
@@ -113,14 +113,14 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
-include_directories(
+ include_directories(include)
+include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(traitementGPS src/TraitementGPS.cpp)
+add_executable(traitementGPS src/TraitementGPS.cpp src/PointGPS.cpp)
 target_link_libraries(traitementGPS ${catkin_LIBRARIES})
-add_dependencies(traitementGPS ${catkin_LIBRARIES})
+add_dependencies(traitementGPS ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ library
 # add_library(gps

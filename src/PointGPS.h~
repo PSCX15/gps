@@ -16,8 +16,9 @@ public:
 	
 	float longitude;
 	float latitude;
+	float altitude;
 	float time;
-	
+	float hop;
 	int numero;
 	
 	float distance(PointGPS* point);

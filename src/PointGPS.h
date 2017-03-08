@@ -11,11 +11,12 @@
 class PointGPS {
 public:
 	PointGPS();
-	PointGPS(float lat, float longi, int num);
+	PointGPS(float lat, float longi,float alt, int num);
 	virtual ~PointGPS();
 	
 	float longitude;
 	float latitude;
+	float altitude;
 	float time;
 	float hop;
 	int numero;

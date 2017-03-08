@@ -10,8 +10,9 @@
 #include <vector>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <sstream>
+#include "sensor_msgs/NavSatFix.h"
 
 #include "gps/GPS_refined.h"
 #include "PointGPS.h"
@@ -27,12 +28,15 @@ float currentTime = 0;
 
 int nombreGPS;
 
+ros::Publisher gpsPourRL;
+
+
 void chatterCallback(const gps::GPS_refined::ConstPtr& msg)
 {
 	int num = msg->numero;
 	if(count<4){
 		if(gpsAssignes[num]==-1){
-			listeGPS[num] = new PointGPS(msg->latitude, msg->longitude, msg->numero);
+			listeGPS[num] = new PointGPS(msg->latitude, msg->longitude,msg->altitude, msg->numero);
 			//listeGPS[num] = gps;
 			                
 			gpsAssignes[num]=num;
@@ -50,6 +54,7 @@ void chatterCallback(const gps::GPS_refined::ConstPtr& msg)
 	listeGPS[num]->latitude = msg->latitude;
 	listeGPS[num]->longitude = msg->longitude;
 	listeGPS[num]->time = msg->time;
+	listeGPS[num]->altitude = msg->altitude;
 	listeGPS[num]->hop = msg->accuracy;
 
 	
@@ -72,6 +77,23 @@ void chatterCallback(const gps::GPS_refined::ConstPtr& msg)
 
   	ROS_INFO("I used %i gps to get this position : N %f , E %f",nombreGPSUtilises, positionMoyenne->latitude, positionMoyenne->longitude);
   	listePourMoyenne.clear();
+  	
+  	// POUR ROBOT_LOCALIZATION
+  	sensor_msgs::NavSatFix gpsMsg;
+  	gpsMsg.header.stamp = ros::Time::now();
+  	gpsMsg.header.frame_id = "odom";
+  	gpsMsg.status.status = 1;
+  	gpsMsg.status.service = 1;
+  	gpsMsg.latitude = positionMoyenne->latitude;
+  	gpsMsg.longitude = positionMoyenne->longitude;
+  	gpsMsg.altitude = positionMoyenne->altitude;
+  	gpsMsg.position_covariance[0] = 4.0;
+  	gpsMsg.position_covariance[4] = 4.0;
+  	gpsMsg.position_covariance[8] = 4.0;
+  	gpsMsg.position_covariance_type = 2;
+  	gpsPourRL.publish(gpsMsg);
+  	
+  	
 	}
 }
 
@@ -80,11 +102,13 @@ void chatterCallback(const gps::GPS_refined::ConstPtr& msg)
 int main(int argc, char **argv)
 {
 
-  ros::init(argc, argv, "main");
+  ros::init(argc, argv, "GPS_main");
   
   ros::NodeHandle n;
   
   ros::Rate loop_rate(10);
+  
+  gpsPourRL = n.advertise<sensor_msgs::NavSatFix>("gps/fix",1000);
   
   gpsAssignes.reserve(4);
   
