@@ -60,7 +60,7 @@ void chatterCallback(const gps::GPS_refined::ConstPtr& msg)
 	
 	listePourMoyenne.push_back(listeGPS[num]);	
 
-	ROS_INFO("il y a %lu gps dans la liste intermediaire", listePourMoyenne.size());
+
 	/*
 	for (int i=0; i<4; i++){
 		if(gpsAssignes[i]!=-1){
@@ -75,21 +75,21 @@ void chatterCallback(const gps::GPS_refined::ConstPtr& msg)
 	if(listePourMoyenne.size()==nombreGPS){
 		int nombreGPSUtilises = positionMoyenne->moyenneIntelligente(listePourMoyenne);
 
-  	ROS_INFO("I used %i gps to get this position : N %f , E %f",nombreGPSUtilises, positionMoyenne->latitude, positionMoyenne->longitude);
+
   	listePourMoyenne.clear();
   	
   	// POUR ROBOT_LOCALIZATION
   	sensor_msgs::NavSatFix gpsMsg;
   	gpsMsg.header.stamp = ros::Time::now();
-  	gpsMsg.header.frame_id = "odom";
+  	gpsMsg.header.frame_id = "base_link";
   	gpsMsg.status.status = 1;
   	gpsMsg.status.service = 1;
   	gpsMsg.latitude = positionMoyenne->latitude;
   	gpsMsg.longitude = positionMoyenne->longitude;
   	gpsMsg.altitude = positionMoyenne->altitude;
-  	gpsMsg.position_covariance[0] = 4.0;
-  	gpsMsg.position_covariance[4] = 4.0;
-  	gpsMsg.position_covariance[8] = 4.0;
+  	gpsMsg.position_covariance[0] = 5.0;
+  	gpsMsg.position_covariance[4] = 5.0;
+  	gpsMsg.position_covariance[8] = 5.0;
   	gpsMsg.position_covariance_type = 2;
   	gpsPourRL.publish(gpsMsg);
   	
