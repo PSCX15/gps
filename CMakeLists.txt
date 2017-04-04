@@ -133,6 +133,10 @@ add_executable(traitementGPS src/TraitementGPS.cpp src/PointGPS.cpp)
 target_link_libraries(traitementGPS ${catkin_LIBRARIES})
 add_dependencies(traitementGPS ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
+add_executable(StaticMapOdom src/static_broadcaster_odom_base_link.cpp)
+target_link_libraries(StaticMapOdom ${catkin_LIBRARIES})
+add_dependencies(StaticMapOdom ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 ## Declare a C++ library
 # add_library(gps
 #   src/${PROJECT_NAME}/gps.cpp
@@ -168,6 +172,12 @@ add_dependencies(traitementGPS ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPO
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  FILES_MATCHING PATTERN "*.launch"
+  PATTERN ".svn" EXCLUDE)
+
 
 ## Mark executables and/or libraries for installation
 # install(TARGETS gps gps_node

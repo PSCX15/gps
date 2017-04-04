@@ -9,6 +9,17 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
+  diagnostic_msgs
+  diagnostic_updater
+  geographic_msgs
+  geometry_msgs
+  message_filters
+  nav_msgs
+  roslint
+  sensor_msgs
+  tf2
+  tf2_geometry_msgs
+  tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -122,6 +133,10 @@ add_executable(traitementGPS src/TraitementGPS.cpp src/PointGPS.cpp)
 target_link_libraries(traitementGPS ${catkin_LIBRARIES})
 add_dependencies(traitementGPS ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
+add_executable(StaticMapOdom src/static_broadcaster_odom_base_link.cpp)
+target_link_libraries(StaticMapOdom ${catkin_LIBRARIES})
+add_dependencies(StaticMapOdom ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 ## Declare a C++ library
 # add_library(gps
 #   src/${PROJECT_NAME}/gps.cpp
