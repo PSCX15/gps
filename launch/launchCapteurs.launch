@@ -1,12 +1,12 @@
 <launch>
 	<group if="1">
-  	<node name="GPS0" pkg="serial_amaury" type="serial_gps_avance" args="0 /dev/ttyUSB0" respawn="true" />
-  	<node name="GPS1" pkg="serial_amaury" type="serial_gps_avance" args="1 /dev/ttyUSB1" respawn="true" />
-  	<node name="GPS2" pkg="serial_amaury" type="serial_gps_avance" args="2 /dev/ttyUSB2" respawn="true" />
-  	<node name="GPS3" pkg="serial_amaury" type="serial_gps_avance" args="3 /dev/ttyUSB3" respawn="true" />
-  	
-  	<node name="traitementGPS" pkg="gps" type="traitementGPS"  respawn="true"/>
+		<node name="GPS0" pkg="serial_amaury" type="serial_gps_avance" args="0 /dev/ttyUSB0" respawn="true" />
+		<node name="GPS1" pkg="serial_amaury" type="serial_gps_avance" args="1 /dev/ttyUSB1" respawn="true" />
+		<node name="GPS2" pkg="serial_amaury" type="serial_gps_avance" args="2 /dev/ttyUSB2" respawn="true" />
+		<node name="GPS3" pkg="serial_amaury" type="serial_gps_avance" args="3 /dev/ttyUSB3" respawn="true" />
+		<node name="traitementGPS" pkg="gps" type="traitementGPS"  respawn="true" output="screen"/>
+	
 	</group>
-		<node pkg="serial_amaury" type="serial_CI" name="lecture_CI" respawn="true" args="9600"/>	
+	<node pkg="serial_amaury" type="serial_CI" name="lecture_CI" respawn="true" args="9600"/>	
 </launch>
 
